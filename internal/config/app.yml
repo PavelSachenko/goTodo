@@ -1,0 +1,6 @@
+
+server:
+  host: 127.0.0.1
+  port: 10000
+  read_timeout: 10s
+  write_timeout: 10s
