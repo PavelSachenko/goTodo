@@ -44,7 +44,7 @@ type signInRequest struct {
 
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInRequest
-	if err := c.BindWith(&input, binding.FormPost); err != nil {
+	if err := c.BindWith(&input, binding.FormMultipart); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
