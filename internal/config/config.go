@@ -8,6 +8,7 @@ import (
 type (
 	Config struct {
 		Http Http
+		DB   DB
 	}
 
 	Http struct {
@@ -16,12 +17,19 @@ type (
 		ReadTimeout  time.Duration `mapstructure:"read_timeout"`
 		WriteTimeout time.Duration `mapstructure:"write_timeout"`
 	}
+
+	DB struct {
+		Driver   string `mapstructure:"driver"`
+		Host     string `mapstructure:"host"`
+		Port     string `mapstructure:"port"`
+		Password string `mapstructure:"password"`
+		Username string `mapstructure:"username"`
+		Database string `mapstructure:"database"`
+	}
 )
 
 func Init(configFile string) (*Config, error) {
-
 	var cfg Config
-	//viper.AddConfigPath(fmt.Sprintf("%s/%s", configPath, configFile))
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("app")
 	viper.AddConfigPath(configFile)
@@ -37,6 +45,9 @@ func Init(configFile string) (*Config, error) {
 
 func unmarshal(cfg *Config) error {
 	if err := viper.UnmarshalKey("server", &cfg.Http); err != nil {
+		return err
+	}
+	if err := viper.UnmarshalKey("db", &cfg.DB); err != nil {
 		return err
 	}
 	return nil

@@ -18,14 +18,14 @@ func NewHandler(service *usecase.SuperService) *Handler {
 }
 
 func (h *Handler) Init(cfg *config.Config) *gin.Engine {
-	handler := gin.Default()
+	handler := gin.New()
 	h.InitApi(handler)
 	return handler
 }
 
 func (h *Handler) InitApi(handler *gin.Engine) {
 	routesV1 := v1.Handler{}
-	api := handler.Group("/api")
+	api := handler.Group("/api", h.cors)
 	{
 		routesV1.Init(api, h.service)
 	}

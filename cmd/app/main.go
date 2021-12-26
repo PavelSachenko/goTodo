@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"newExp/internal/config"
 	"newExp/internal/controller/http"
 	"newExp/internal/repository"
@@ -9,16 +11,28 @@ import (
 	"newExp/pkg/db/mysql"
 )
 
+type Claims struct {
+	jwt.StandardClaims
+	UserId uint64 `json:"userId"`
+}
+
 func main() {
-	db := mysql.NewMySqlConnection("testing")
+
 	config, _ := config.Init("internal/config")
+	db := mysql.NewMySqlConnection(
+		config.DB.Username,
+		config.DB.Password,
+		config.DB.Host,
+		config.DB.Port,
+		config.DB.Database,
+	)
 	repo := repository.NewSuperRepository(db)
 	service := usecase.NewSuperService(repo)
 	handler := http.NewHandler(service)
 	server := server2.NewServer(config, handler.Init(config))
 	err := server.Run()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	err = server.Stop()
 }

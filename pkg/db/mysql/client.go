@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-func NewMySqlConnection(dbname string) *sqlx.DB {
-	db, err := sqlx.Open("mysql", fmt.Sprintf("pavel:pass@tcp(127.0.0.1:3306)/%s", dbname))
+func NewMySqlConnection(username, password, host, port, database string) *sqlx.DB {
+	db, err := sqlx.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, database))
 	if err != nil {
 		log.Fatalln(err)
 	}
