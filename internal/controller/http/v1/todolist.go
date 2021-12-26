@@ -26,10 +26,6 @@ func (h *Handler) initTodoList(api *gin.RouterGroup) {
 }
 
 func (h *Handler) getLists(c *gin.Context) {
-	c.JSON(http.StatusOK, struct {
-		Test   string `json:"test"`
-		Number int    `json:"number"`
-	}{Test: "First", Number: 1})
 	c.Status(http.StatusOK)
 }
 
