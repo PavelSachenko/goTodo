@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  todo:
+    build: ./
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - MYSQL_PASSWORD=pass
+    networks:
+      - app
+
+  db:
+    restart: always
+    container_name: mysql_db
+    image: mysql:8
+#    command: ./init.sql
+    environment:
+      - MYSQL_USER=todo
+      - MYSQL_PASSWORD=pass
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_DATABASE=todo
+    volumes:
+      - ./.database/mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+networks:
+  app:
+    driver: "bridge"

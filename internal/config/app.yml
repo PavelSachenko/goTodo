@@ -1,13 +1,13 @@
 server:
-  host: 127.0.0.1
-  port: 10000
+  host: todo
+  port: 8000
   read_timeout: 10s
   write_timeout: 10s
 
 db:
   driver: mysql
-  host: 127.0.0.1
+  host: db
   port: 3306
   password: pass
-  username: pavel
-  database: testing
+  username: todo
+  database: todo
