@@ -28,6 +28,19 @@ services:
       - "3306:3306"
     networks:
       - app
+
+  migrate:
+    image: migrate/migrate
+    command: ["-path", "/migrations", "-database", "mysql://todo:pass@tcp(localhost:3306)/todo", "up"]
+    networks:
+      - app
+    volumes:
+      - .:/migrations
+    links:
+      - db
+    depends_on:
+      - db
+
 networks:
   app:
     driver: "bridge"
