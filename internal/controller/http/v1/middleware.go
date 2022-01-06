@@ -36,3 +36,19 @@ func (h *Handler) auth(c *gin.Context) {
 
 	c.Set(userId, id)
 }
+
+func (h *Handler) checkUserId(c *gin.Context) {
+	id, ok := c.Get(userId)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
+			"Authorization": "user not found",
+		})
+	}
+
+	_, ok = id.(uint64)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
+			"error": "id is of invalid type",
+		})
+	}
+}

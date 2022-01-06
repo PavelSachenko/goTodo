@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"newExp/internal/usecase"
 )
@@ -19,16 +18,16 @@ func (h *Handler) Init(api *gin.RouterGroup, service *usecase.SuperService) {
 	}
 }
 
-func getUserId(c *gin.Context) (uint64, error) {
-	id, ok := c.Get(userId)
-	if !ok {
-		return 0, errors.New("user not found")
-	}
+func getUserId(c *gin.Context) uint64 {
+	id, _ := c.Get(userId)
+	//if !ok {
+	//	return 0, errors.New("user not found")
+	//}
+	//
+	//uId, ok := id.(uint64)
+	//if !ok {
+	//	return 0, errors.New("id is of invalid type")
+	//}
 
-	uId, ok := id.(uint64)
-	if !ok {
-		return 0, errors.New("id is of invalid type")
-	}
-
-	return uId, nil
+	return id.(uint64)
 }

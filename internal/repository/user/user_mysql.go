@@ -41,7 +41,7 @@ func (u *UserMysql) CreateUser(user *model.User) (uint64, error) {
 	}
 
 	if exist == true {
-		return 0, errors.New("User already exists")
+		return 0, errors.New("user already exists")
 	}
 
 	query := "INSERT INTO " + model.UserTable + " (name, password_hash) VALUES(?, ?)"

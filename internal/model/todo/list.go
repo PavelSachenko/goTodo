@@ -1,11 +1,16 @@
 package todo
 
-import "time"
+var (
+	ListTable = "lists"
+)
 
 type List struct {
-	ID          uint64
-	UserID      uint64
-	Title       string
-	Description string
-	DateCreated time.Time
+	ID          uint64 `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+type UpdateItemInput struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }

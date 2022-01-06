@@ -11,9 +11,9 @@ type Item interface {
 }
 
 type List interface {
-	Get(id uint64) (*todo.List, error)
-	All() ([]*todo.List, error)
-	Create(*todo.List) error
-	Update(id uint64) error
-	Delete(id uint64) error
+	Get(id uint64, userId uint64) (*todo.List, error)
+	All(userId uint64) ([]todo.List, error)
+	Create(uint64, *todo.List) (uint64, error)
+	Update(list todo.UpdateItemInput, listId, userId uint64) error
+	Delete(id uint64, userId uint64) error
 }

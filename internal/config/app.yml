@@ -1,12 +1,12 @@
 server:
-  host: todo
+  host: localhost
   port: 8000
   read_timeout: 10s
   write_timeout: 10s
 
 db:
   driver: mysql
-  host: db
+  host: localhost
   port: 3306
   password: pass
   username: todo

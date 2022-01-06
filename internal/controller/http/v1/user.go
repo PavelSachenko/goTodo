@@ -25,10 +25,7 @@ func (h *Handler) initUser(api *gin.RouterGroup) {
 }
 
 func (h *Handler) getUser(c *gin.Context) {
-	id, err := getUserId(c)
-	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
-	}
+	id := getUserId(c)
 	user, err := h.service.Auth.GetUser(id)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())

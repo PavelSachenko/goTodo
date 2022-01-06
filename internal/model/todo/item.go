@@ -2,6 +2,10 @@ package todo
 
 import "time"
 
+var (
+	ItemTable = "items"
+)
+
 type Items struct {
 	ID          uint64
 	ListId      uint64

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"newExp/internal/config"
 	"newExp/internal/controller/http"
 	"newExp/internal/repository"
@@ -11,13 +10,7 @@ import (
 	"newExp/pkg/db/mysql"
 )
 
-type Claims struct {
-	jwt.StandardClaims
-	UserId uint64 `json:"userId"`
-}
-
 func main() {
-
 	config, _ := config.Init("internal/config")
 	db := mysql.NewMySqlConnection(
 		config.DB.Username,
