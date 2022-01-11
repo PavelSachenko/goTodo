@@ -3,11 +3,11 @@ package todo
 import "newExp/internal/model/todo"
 
 type Item interface {
-	Get()
-	GetAllByListId()
-	Create()
-	Update()
-	Delete()
+	Get(id uint64) (*todo.Item, error)
+	GetAllByListId(listId uint64) ([]todo.Item, error)
+	Create(listId uint64, item *todo.Item) (uint64, error)
+	Update(updateItem todo.UpdateItem, itemId uint64) error
+	Delete(id uint64) error
 }
 
 type List interface {
@@ -16,4 +16,5 @@ type List interface {
 	Create(uint64, *todo.List) (uint64, error)
 	Update(list todo.UpdateItemInput, listId, userId uint64) error
 	Delete(id uint64, userId uint64) error
+	ListIsBelongToUser(listId uint64, userId uint64) (bool, error)
 }

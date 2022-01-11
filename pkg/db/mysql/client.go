@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"time"
 )
 
 func NewMySqlConnection(username, password, host, port, database string) *sqlx.DB {
@@ -20,6 +21,11 @@ func NewMySqlConnection(username, password, host, port, database string) *sqlx.D
 	}
 
 	return db
+}
+
+func SetNowYmdIhs() sql.NullString {
+	time := time.Now()
+	return sql.NullString{String: time.Format("2006-01-02 15:01:05"), Valid: true}
 }
 
 func NewNullString(s string) sql.NullString {

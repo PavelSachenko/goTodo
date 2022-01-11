@@ -42,3 +42,6 @@ func (s *Service) UpdateList(list todo.UpdateItemInput, listId, userId uint64) e
 func (s *Service) DeleteList(id uint64, userId uint64) error {
 	return s.repo.Delete(id, userId)
 }
+func (s *Service) CheckAccessRight(listId uint64, userId uint64) (bool, error) {
+	return s.repo.ListIsBelongToUser(listId, userId)
+}

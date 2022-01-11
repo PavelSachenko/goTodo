@@ -2,8 +2,8 @@ package todo
 
 import (
 	"context"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
-	"log"
 	"newExp/internal/model/todo"
 )
 
@@ -77,8 +77,7 @@ func (l *ListRepo) Create(userId uint64, list *todo.List) (uint64, error) {
 
 func (l *ListRepo) Update(list todo.UpdateItemInput, listId, userId uint64) error {
 	query := "UPDATE " + todo.ListTable + " LEFT JOIN " + todo.UserListTable + " ul ON ul.list_id = lists.id  SET lists.title = ?, lists.description = ? WHERE ul.user_id = ? AND lists.id = ?"
-	result, err := l.db.Exec(query, list.Title, list.Description, userId, listId)
-	log.Println(result)
+	_, err := l.db.Exec(query, list.Title, list.Description, userId, listId)
 	return err
 }
 
@@ -87,4 +86,13 @@ func (l *ListRepo) Delete(id uint64, userId uint64) error {
 		todo.UserListTable + " ul ON ul.list_id = lists.id WHERE ul.user_id = ? AND lists.id = ?"
 	_, err := l.db.Exec(query, userId, id)
 	return err
+}
+func (l *ListRepo) ListIsBelongToUser(listId uint64, userId uint64) (bool, error) {
+	query := "SELECT lists.id FROM " + todo.ListTable + " INNER JOIN " + todo.UserListTable + " ul on lists.id = ul.list_id AND ul.user_id = ? AND ul.list_id = ?"
+	var exist int
+	err := l.db.QueryRow(query, userId, listId).Scan(&exist)
+	if err != nil && err != sql.ErrNoRows {
+		return false, err
+	}
+	return true, err
 }

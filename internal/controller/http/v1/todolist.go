@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"newExp/internal/controller/http/v1/response"
@@ -14,17 +15,21 @@ func (h *Handler) initTodoList(api *gin.RouterGroup) {
 		lists := todo.Group("/lists")
 		{
 			lists.GET("/", h.getLists)
-			lists.GET("/:id", h.getList)
 			lists.POST("/", h.createList)
-			lists.PUT("/:id", h.updateList)
-			lists.DELETE("/:id", h.deleteList)
+			lists.Use(h.checkAccessRight)
+			{
+				lists.GET("/:list_id", h.getList)
+				lists.PUT("/:list_id", h.updateList)
+				lists.DELETE("/:list_id", h.deleteList)
+			}
 		}
-		item := todo.Group("/items")
+		item := todo.Group("/list/:list_id", h.checkAccessRight)
 		{
-			item.GET("/", h.getItems)
-			item.POST("/", h.createItems)
-			item.PUT("/:id", h.updateItems)
-			item.DELETE("/:id", h.deleteItems)
+			item.GET("/items/:item_id", h.getItem)
+			item.GET("/items/", h.getItems)
+			item.POST("/items", h.createItems)
+			item.PUT("/items/:item_id", h.updateItems)
+			item.DELETE("/items/:item_id", h.deleteItems)
 		}
 	}
 }
@@ -40,7 +45,7 @@ func (h *Handler) getLists(c *gin.Context) {
 }
 
 func (h *Handler) getList(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -81,7 +86,7 @@ func (h *Handler) createList(c *gin.Context) {
 }
 
 func (h *Handler) updateList(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -99,7 +104,7 @@ func (h *Handler) updateList(c *gin.Context) {
 }
 
 func (h *Handler) deleteList(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -113,18 +118,105 @@ func (h *Handler) deleteList(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+func (h *Handler) getItem(c *gin.Context) {
+	itemId, err := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	if err != nil {
+	}
+	item, err := h.service.Item.GetById(itemId)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+	c.JSON(http.StatusOK, response.ItemResponse{
+		ID:      item.ID,
+		Title:   item.Title,
+		Text:    item.Text,
+		DueDate: item.DueDate.String,
+		Checked: item.Checked,
+	})
+}
+
 func (h *Handler) getItems(c *gin.Context) {
-	c.Status(http.StatusOK)
+	listId, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
+	if err != nil {
+	}
+	items, err := h.service.Item.GetAllFromList(listId)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+	var result []*response.ItemResponse
+	for _, item := range items {
+		responseItem := &response.ItemResponse{
+			ID:      item.ID,
+			Title:   item.Title,
+			Text:    item.Text,
+			DueDate: item.DueDate.String,
+			Checked: item.Checked,
+		}
+		result = append(result, responseItem)
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+type InputItemRequest struct {
+	Title   string         `form:"title" json:"title" binding:"required"`
+	Text    string         `form:"text" json:"text" binding:"required"`
+	DueDate sql.NullString `form:"due_date" json:"due_date"`
 }
 
 func (h *Handler) createItems(c *gin.Context) {
-	c.Status(http.StatusOK)
+	var input InputItemRequest
+	listId, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if err := c.BindJSON(&input); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	item := &todo.Item{
+		Title:   input.Title,
+		Text:    input.Text,
+		DueDate: input.DueDate,
+	}
+	itemId, err := h.service.Item.CreateItem(listId, item)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusCreated, map[string]uint64{
+		"id": itemId,
+	})
 }
 
 func (h *Handler) updateItems(c *gin.Context) {
-	c.Status(http.StatusOK)
+	var input todo.UpdateItem
+	itemId, err := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	if err := c.BindJSON(&input); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if err := h.service.Item.UpdateItem(input, itemId); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	c.Status(http.StatusNoContent)
 }
 
 func (h *Handler) deleteItems(c *gin.Context) {
-	c.Status(http.StatusOK)
+	itemId, err := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	err = h.service.Item.DeleteItem(itemId)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusNoContent)
 }

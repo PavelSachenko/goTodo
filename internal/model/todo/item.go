@@ -1,16 +1,24 @@
 package todo
 
-import "time"
+import (
+	"database/sql"
+)
 
 var (
 	ItemTable = "items"
 )
 
-type Items struct {
-	ID          uint64
-	ListId      uint64
-	Text        string
-	DueDate     time.Time
-	Checked     bool
-	DateCreated time.Time
+type Item struct {
+	ID      uint64
+	Title   string
+	Text    string
+	DueDate sql.NullString
+	Checked bool
+}
+
+type UpdateItem struct {
+	Title   *string `json:"title"`
+	Text    *string `json:"text"`
+	DueDate *string `json:"dueDate"`
+	Checked *bool   `json:"checked"`
 }

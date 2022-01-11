@@ -18,6 +18,6 @@ func NewSuperRepository(db *sqlx.DB) *SuperRepository {
 		List: todo.NewListMysql(db),
 		Item: todo.NewItemMysql(db),
 		Auth: user.NewUserMySql(db),
-		User: user.NewUserMySql(db), //TODO refactoring
+		User: user.NewUserMySql(db),
 	}
 }
