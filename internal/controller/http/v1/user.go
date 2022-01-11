@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"net/http"
@@ -63,11 +62,9 @@ type signUpRequest struct {
 func (h *Handler) signUp(c *gin.Context) {
 	var input signUpRequest
 	if err := c.BindWith(&input, binding.FormMultipart); err != nil {
-		fmt.Println(err.Error())
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
 	bearer, err := h.service.Auth.CreateUser(&model.User{Username: input.Username, Password: input.Password})
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())

@@ -3,13 +3,13 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"newExp/internal/controller/http/v1/response"
 	"strconv"
 	"strings"
 )
 
 var (
 	userId = "userId"
+	listId = "listId"
 )
 
 func (h *Handler) auth(c *gin.Context) {
@@ -55,17 +55,18 @@ func (h *Handler) checkUserId(c *gin.Context) {
 	}
 }
 
-func (h *Handler) checkAccessRight(c *gin.Context) {
-	listId, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
+func (h *Handler) checkAccessRightForList(c *gin.Context) {
+	list_id, err := strconv.ParseUint(c.Param("list_id"), 10, 64)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
+			"error": "list_id is of invalid type",
+		})
 	}
-	result, err := h.service.List.CheckAccessRight(listId, getUserId(c))
+	c.Set(listId, list_id)
+	result, err := h.service.List.CheckAccessRight(list_id, getUserId(c))
 	if err != nil || result != true {
 		c.AbortWithStatusJSON(http.StatusForbidden, map[string]string{
 			"error": "Access is denied",
 		})
-		return
 	}
 }

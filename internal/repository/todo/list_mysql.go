@@ -50,7 +50,7 @@ func (l *ListRepo) All(userId uint64) ([]todo.List, error) {
 	return lists, nil
 }
 
-func (l *ListRepo) Create(userId uint64, list *todo.List) (uint64, error) {
+func (l *ListRepo) Create(userId uint64, list todo.InputListRequest) (uint64, error) {
 	ctx := context.Background()
 	tx, err := l.db.BeginTx(ctx, nil)
 	if err != nil {

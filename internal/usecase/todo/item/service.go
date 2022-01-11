@@ -15,7 +15,7 @@ func NewService(repo repository.Item) *Service {
 	}
 }
 
-func (s *Service) CreateItem(listId uint64, item *todo.Item) (uint64, error) {
+func (s *Service) CreateItem(listId uint64, item *todo.InputItemRequest) (uint64, error) {
 	return s.repo.Create(listId, item)
 }
 

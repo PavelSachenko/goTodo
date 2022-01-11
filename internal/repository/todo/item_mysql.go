@@ -46,7 +46,7 @@ func (i *ItemMysql) GetAllByListId(listId uint64) ([]todo.Item, error) {
 	return items, nil
 }
 
-func (i *ItemMysql) Create(listId uint64, item *todo.Item) (uint64, error) {
+func (i *ItemMysql) Create(listId uint64, item *todo.InputItemRequest) (uint64, error) {
 	ctx := context.Background()
 	tx, err := i.db.BeginTx(ctx, nil)
 	if err != nil {

@@ -11,6 +11,9 @@ import (
 )
 
 func main() {
+	test := []byte("Hello world")
+	fmt.Println(test)
+	return
 	config, _ := config.Init("internal/config")
 	db := mysql.NewMySqlConnection(
 		config.DB.Username,

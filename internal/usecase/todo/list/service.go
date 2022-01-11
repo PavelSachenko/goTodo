@@ -1,7 +1,6 @@
 package list
 
 import (
-	"newExp/internal/app"
 	"newExp/internal/model/todo"
 	repository "newExp/internal/repository/todo"
 )
@@ -21,9 +20,7 @@ func (s *Service) GetList(id, userId uint64) (*todo.List, error) {
 	if err != nil {
 		return nil, err
 	}
-	if result == nil {
-		return nil, app.ErrNotFound
-	}
+
 	return result, nil
 }
 
@@ -31,7 +28,7 @@ func (s *Service) SearchLists(userId uint64) ([]todo.List, error) {
 	return s.repo.All(userId)
 }
 
-func (s *Service) CreateList(usedId uint64, list *todo.List) (uint64, error) {
+func (s *Service) CreateList(usedId uint64, list todo.InputListRequest) (uint64, error) {
 	return s.repo.Create(usedId, list)
 }
 
