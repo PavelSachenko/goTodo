@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"newExp/internal/config"
 	"newExp/internal/repository"
 	"newExp/internal/usecase/todo/item"
 	"newExp/internal/usecase/todo/list"
@@ -8,15 +9,17 @@ import (
 )
 
 type SuperService struct {
-	List *list.Service
-	Auth *user.Service
-	Item *item.Service
+	List   list.List
+	Auth   user.Authorization
+	Item   item.Item
+	Config *config.Config
 }
 
-func NewSuperService(repository *repository.SuperRepository) *SuperService {
+func NewSuperService(repository *repository.SuperRepository, cnf *config.Config) *SuperService {
 	return &SuperService{
-		List: list.NewService(repository.List),
-		Item: item.NewService(repository.Item),
-		Auth: user.NewService(repository.Auth, repository.User),
+		Config: cnf,
+		List:   list.NewService(repository.List),
+		Item:   item.NewService(repository.Item),
+		Auth:   user.NewService(repository.Auth, repository.User),
 	}
 }

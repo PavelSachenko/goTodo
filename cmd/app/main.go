@@ -11,9 +11,6 @@ import (
 )
 
 func main() {
-	test := []byte("Hello world")
-	fmt.Println(test)
-	return
 	config, _ := config.Init("internal/config")
 	db := mysql.NewMySqlConnection(
 		config.DB.Username,
@@ -23,7 +20,7 @@ func main() {
 		config.DB.Database,
 	)
 	repo := repository.NewSuperRepository(db)
-	service := usecase.NewSuperService(repo)
+	service := usecase.NewSuperService(repo, config)
 	handler := http.NewHandler(service)
 	server := server2.NewServer(config, handler.Init(config))
 	err := server.Run()

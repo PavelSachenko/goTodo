@@ -9,6 +9,12 @@ type Handler struct {
 	service *usecase.SuperService
 }
 
+func NewHandler(service *usecase.SuperService) *Handler {
+	return &Handler{
+		service: service,
+	}
+}
+
 func (h *Handler) Init(api *gin.RouterGroup, service *usecase.SuperService) {
 	h.service = service
 	handler := api.Group("v1")

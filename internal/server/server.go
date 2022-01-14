@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"newExp/internal/config"
 )
@@ -11,9 +12,11 @@ type Server struct {
 }
 
 func NewServer(cfg *config.Config, handler http.Handler) *Server {
+	serverAdr := fmt.Sprintf("%s:%s", cfg.Http.Host, cfg.Http.Port)
+	log.Println(serverAdr)
 	return &Server{
 		httpServer: &http.Server{
-			Addr:         fmt.Sprintf("%s:%s", cfg.Http.Host, cfg.Http.Port),
+			Addr:         serverAdr,
 			Handler:      handler,
 			ReadTimeout:  cfg.Http.ReadTimeout,
 			WriteTimeout: cfg.Http.WriteTimeout,

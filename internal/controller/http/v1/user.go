@@ -40,13 +40,13 @@ type signInRequest struct {
 
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInRequest
-	if err := c.BindWith(&input, binding.FormMultipart); err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err := c.BindWith(&input, binding.JSON); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 	bearer, err := h.service.Auth.SignIn(input.Username, input.Password)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		response.NewErrorResponse(c, http.StatusForbidden, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, map[string]string{
@@ -61,8 +61,8 @@ type signUpRequest struct {
 
 func (h *Handler) signUp(c *gin.Context) {
 	var input signUpRequest
-	if err := c.BindWith(&input, binding.FormMultipart); err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err := c.BindWith(&input, binding.JSON); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 	bearer, err := h.service.Auth.CreateUser(&model.User{Username: input.Username, Password: input.Password})
@@ -71,7 +71,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]string{
+	c.JSON(http.StatusCreated, map[string]string{
 		"bearerToken": bearer,
 	})
 }

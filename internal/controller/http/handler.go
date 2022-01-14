@@ -18,6 +18,7 @@ func NewHandler(service *usecase.SuperService) *Handler {
 }
 
 func (h *Handler) Init(cfg *config.Config) *gin.Engine {
+	//gin.SetMode(gin.ReleaseMode)
 	handler := gin.New()
 	h.InitApi(handler)
 	return handler

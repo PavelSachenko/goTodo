@@ -4,7 +4,7 @@ services:
   todo:
     build: ./
     ports:
-      - "8000:8000"
+      - "80:8000"
     depends_on:
       - db
     environment:
@@ -25,13 +25,14 @@ services:
     volumes:
       - ./.database/mysql/data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "33060:3306"
+    hostname: "todo"
     networks:
       - app
 
   migrate:
     image: migrate/migrate
-    command: ["-path", "/migrations", "-database", "mysql://todo:pass@tcp(localhost:3306)/todo", "up"]
+    command: ["-path", "/migrations", "-database", "mysql://todo:pass@tcp(db:33060)/todo", "up"]
     networks:
       - app
     volumes:
