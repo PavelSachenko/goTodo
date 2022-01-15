@@ -1,0 +1,12 @@
+basePath: /
+host: localhost:8000
+info:
+  contact: {}
+  title: Test Project
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

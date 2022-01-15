@@ -10,6 +10,12 @@ import (
 	"newExp/pkg/db/mysql"
 )
 
+// @title Test Project
+// @host localhost:8000
+// @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	config, _ := config.Init("internal/config")
 	db := mysql.NewMySqlConnection(

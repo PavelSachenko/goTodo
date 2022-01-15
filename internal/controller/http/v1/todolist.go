@@ -35,6 +35,14 @@ func (h *Handler) initTodoList(api *gin.RouterGroup) {
 
 //---------Lists---------
 
+// @Summary SignUp
+// @Tags Lists
+// @Description Get all lists
+// @ID get lists
+// @Produce json
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /api/v1/todo/lists/ [get]
 func (h *Handler) getLists(c *gin.Context) {
 	result, err := h.service.List.SearchLists(getUserId(c))
 	if err != nil {
